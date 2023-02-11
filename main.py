@@ -36,6 +36,7 @@ while True:
 
             if True in correspondem:
                 primeiraCorrespondencia = correspondem.index(True)
+                #nome = "%s\n%s" %(nomesFacesConhecidas[primeiraCorrespondencia], matriculas[primeiraCorrespondencia])
                 nome = nomesFacesConhecidas[primeiraCorrespondencia]
 
             nomesFaces.append(nome)

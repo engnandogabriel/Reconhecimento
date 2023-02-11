@@ -11,7 +11,7 @@ aSeremRegistrados = {} #Dicionário de dicionários -> Chave: id do aluno do ban
 api = "https://api-fapema.herokuapp.com/reconhecimento"
 faces_armazenadas = "data/backup/faces.npz" #Caminho do backup local dos códigos faciais
 requisicao = requests.get(api) #Variável que recebe o banco de dados como um dicionário
-
+index = 0
 
 #Faz o Download das imagens dos alunos 
 #Parâmetros: string do link da foto, string com a matrícula do aluno | Retorna o caminho da imagem
@@ -85,6 +85,7 @@ def VerificaRegistro():
     else:
         return True
 
+
 #Carrega os nomes do arquivo local | Retorna uma lista com nomes
 def ImportarNomes():
     #Carrega o arquivo na variável
@@ -128,4 +129,5 @@ if VerificaRegistro():
     for registro in aSeremRegistrados:
         face = ExtrairFace(aSeremRegistrados[registro]['foto'], aSeremRegistrados[registro]['matricula'])
         ArmazenarFace(aSeremRegistrados[registro], face)
+
 
