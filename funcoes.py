@@ -6,6 +6,8 @@ import base64 #Usada para converter um vetor complexo em uma string sem perda de
 import requests #Usada para fazer requisições ao servidor
 import urllib.request #Usada para fazer os downloads necessários
 import cv2 #Usada para acessar a câmera
+import datetime  #Usada para pegar a data atual 
+
 
 aSeremRegistrados = {} #Dicionário de dicionários -> Chave: id do aluno do banco de dados; Valor: Dicionário contendo as informações do aluno
 aSeremAtualizados = {} #Dicionário de dicionários -> Chave: id do aluno no banco de dados; Valor :Dicionário contendo as informações do aluno
@@ -156,9 +158,50 @@ def atualizarAluno(matricula, face):
     requests.patch("{}/id/{}".format(api,matricula), {'caracteres' : tobase64})
     # /atualized/id/:matricula
 
+# método para verificar se o aluno já foi registrado a frequência
+def verificaPresenca(matricula):
+    # Requisição para recuperar a presença do usuário
+    get = requests.get("%s/id/%s"%(api, matricula)).json()
+    dateDatabase = get['createdAt']
+    
+    # Seperar o date da requisição e recuperar apenas a data 
+    dateUser = dateDatabase.split('T')
+    dateUser = dateUser[0]
+
+    #converter dcurrentDate para string
+    currentDate = datetime.date.today() #recupera o dia atual 
+    currentDate = currentDate.strftime('%Y-%m-%d') #converter para string
+
+    if dateUser == currentDate:
+        return 1
+    else:
+        return 0
+    
+
 #Esse é um método que ainda deve ser implementado. Deve ser acionado quando o aluno for reconhecido. Depende do funcionamento interno de registro de presença do Campus
 def ConfirmaPresenca(matricula):
-    pass
+    # Requisição para recuperar a presença do usuário
+    get = requests.get("%s/id/%s"%(api, matricula)).json()
+    dateDatabase = get['createdAt']
+    presenca = get['presenca']
+
+    
+    # Seperar o date da requisição e recuperar apenas a data 
+    dateUser = dateDatabase.split('T')
+    dateUser = dateUser[0]
+
+
+    currentDate = datetime.date.today() #recupera o dia atual 
+    currentHours = datetime.datetime.now()
+   
+
+
+    if currentDate != dateUser:
+        print('Aluno ainda não registrado')
+        #requests.patch('{}/id/{}' .format(api, matricula), {'createdAt': currentHours, 'presenca': presenca+1})
+        requests.patch("%s/presence/%s"%(api, matricula), {'createdAt' : currentHours, 'presenca' : presenca + 1})
+        print("Aluno registrado com suscesso")
+        return 0
 
 
 # def ConfirmaPresenca(matricula):

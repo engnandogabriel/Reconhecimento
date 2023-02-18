@@ -11,6 +11,15 @@ captura = cv2.VideoCapture(0) #Inicia a câmera
 facesConhecidas = funcoes.ImportarFaces() #Armazena as faces que já estavam salvas localmente
 nomesFacesConhecidas = funcoes.ImportarNomes() #Armazena, com os mesmos índices da lista anterior, os nomes dos alunos
 matriculas = funcoes.ImportarMatriculas() #Armazena, com os mesmos índices da lista anterior, as matrículas dos alunos
+
+# ter controle se o aluno já foi verificado
+controleData = []
+controleBanco = [] 
+for c in range(len(matriculas)):
+    controleData.append(0)
+    controleBanco.append(0)
+
+
 continuarProcesso = True #Variável de controle
 
 while True:
@@ -37,7 +46,24 @@ while True:
             if True in correspondem:
                 primeiraCorrespondencia = correspondem.index(True)
                 nome = nomesFacesConhecidas[primeiraCorrespondencia]
+                matricula = matriculas[primeiraCorrespondencia]
 
+
+                if (controleBanco[primeiraCorrespondencia] == 0):
+                    controleBanco[primeiraCorrespondencia] = 1
+                    verificaBanco = funcoes.verificaPresenca(matricula)
+                    print("Aluno já registrado!")
+
+
+            if controleData[primeiraCorrespondencia] == 0:
+                if verificaBanco == 0:
+                    print('Registrando Aluno')
+                    funcoes.ConfirmaPresenca(matricula)
+                    controleData[primeiraCorrespondencia] = 1
+            else:
+                print('Aluno ja registrado')
+
+            # print(matricula)
             nomesFaces.append(nome)
 
     continuarProcesso = not continuarProcesso #Dá um tempo para que o processamento possa ocorrer.
