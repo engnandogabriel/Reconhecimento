@@ -52,8 +52,7 @@ while True:
                 if (controleBanco[primeiraCorrespondencia] == 0):
                     controleBanco[primeiraCorrespondencia] = 1
                     verificaBanco = funcoes.verificaPresenca(matricula)
-                    print("Aluno já registrado!")
-
+                    
 
             if controleData[primeiraCorrespondencia] == 0:
                 if verificaBanco == 0:
