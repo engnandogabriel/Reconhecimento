@@ -82,7 +82,7 @@ def ImportarFaces():
 def VerificaRegistro():
     for registro in requisicao.json():
         if registro['registered'] == False: #Salva, no dicionário, os dados de qualquer aluno que ainda não tem face registrada
-            aSeremRegistrados[registro['_id']] = {'nome' : registro['nome'], 'matricula' : registro['matricula'], 'foto' : registro['foto'], 'presenca' : registro['presenca']}
+            aSeremRegistrados[registro['_id']] = {'nome' : registro['nome'], 'matricula' : registro['matricula'], 'foto' : registro['foto']}
     if len(aSeremRegistrados) == 0: #Se houver algum aluno salvo no dicionário, significa que é necessária uma atualização no banco local
         print('Nenhum aluno a ser cadastrado!')
         return False
@@ -93,7 +93,7 @@ def VerificaRegistro():
 def verificaAtualizacao():
     for atualizacao in requisicao.json():
         if atualizacao['atualized'] == True:
-            aSeremAtualizados[atualizacao['_id']] = {'nome' : atualizacao['nome'], 'matricula' : atualizacao['matricula'], 'foto' : atualizacao['foto'], 'presenca' : atualizacao['presenca']}
+            aSeremAtualizados[atualizacao['_id']] = {'nome' : atualizacao['nome'], 'matricula' : atualizacao['matricula'], 'foto' : atualizacao['foto']}
     if len(aSeremAtualizados) == 0:
         print('Nenhum aluno a ser atualizado')
         return False
@@ -159,55 +159,68 @@ def atualizarAluno(matricula, face):
     # /atualized/id/:matricula
 
 # método para verificar se o aluno já foi registrado a frequência
-def verificaPresenca(matricula):
-    # Requisição para recuperar a presença do usuário
-    get = requests.get("%s/id/%s"%(api, matricula)).json()
-    dateDatabase = get['createdAt']
+def verificaPresenca(id):
     
-    # Seperar o date da requisição e recuperar apenas a data 
+    # Requisição para recuperar a presença do usuário
+    #get = requests.get("%s/id/%s"%(api, matricula)).json()
+    get = requisicao.json()[id]
+
+    frequencia = get['frequencia']
+
+    dateDatabase = get['atualizedAt']
+
+    # Seperar o date da requisição do usuário e recuperar apenas a data 
     dateUser = dateDatabase.split('T')
     dateUser = dateUser[0]
-
+    
     #converter dcurrentDate para string
     currentDate = datetime.date.today() #recupera o dia atual 
     currentDate = currentDate.strftime('%Y-%m-%d') #converter para string
 
-    if dateUser == currentDate:
-        return 1
-    else:
+    #se o campo frequencia estiver vazio, cadastrar frequencia mesmo se a data do BD for igual a data atual,
+    #pois isso significa que o usuário foi cadastrado no mesmo dia em que ele começou a usar o sistema
+
+    if (len(frequencia) == 0):
         return 0
+    
+    #if a data do DB for diferente da data atual, significa que o usuário ja foi registrado no BD
+    elif dateUser != currentDate:
+        return 0
+        
+    #caso as duas condições forem falsas, registrar usuário no BD
+    else:
+        return 1
     
 
 #Esse é um método que ainda deve ser implementado. Deve ser acionado quando o aluno for reconhecido. Depende do funcionamento interno de registro de presença do Campus
-def ConfirmaPresenca(matricula):
-    # Requisição para recuperar a presença do usuário
-    get = requests.get("%s/id/%s"%(api, matricula)).json()
-    dateDatabase = get['createdAt']
-    presenca = get['presenca']
-
+def ConfirmaPresenca(id, nome, matricula):
     
-    # Seperar o date da requisição e recuperar apenas a data 
-    dateUser = dateDatabase.split('T')
-    dateUser = dateUser[0]
+    print(nome)
 
+    print("Registrando o usuário %s com matricula %s no bando de dados"%(nome,matricula))
 
-    currentDate = datetime.date.today() #recupera o dia atual 
-    currentHours = datetime.datetime.now()
-   
+    # Requisição para recuperar a presença do usuárioq
+    get = requisicao.json()[id]
+    dateDatabase = get['atualizedAt']
+    frequencia = get['frequencia']
+    print(frequencia)
+    
+    # Seperar o date da requisição e recuperar apenas a data do usuario
+    dateUser = dateDatabase.split('T')[0]
+    print(dateUser)
 
+    #data que sera registrado no banco de dados no campo frequencia
+    currentDate = datetime.datetime.now()
+    currentDate = currentDate.strftime('%Y-%m-%dT%H:%M')
 
+    #data que vai ser registrado no banco de dados no campo atualizedAt
+    currentDataBase = datetime.datetime.now()
+
+    #se a data de hoje for diferente da data do usuário:
     if currentDate != dateUser:
-        print('Aluno ainda não registrado')
-        #requests.patch('{}/id/{}' .format(api, matricula), {'createdAt': currentHours, 'presenca': presenca+1})
-        requests.patch("%s/presence/%s"%(api, matricula), {'createdAt' : currentHours, 'presenca' : presenca + 1})
+        requests.patch("%s/registrarfrequencia/%s"%(api, matricula), {'atualizedAt' : currentDataBase, 'dateUser': currentDate})
         print("Aluno registrado com suscesso")
-        return 0
-
-
-# def ConfirmaPresenca(matricula):
-#     get = requests.get("%s/id/%s"%(api, matricula))
-#     json = {'presenca' : get['presenca']+1}
-#     requests.patch("%s/id/%s"%(api, matricula), json)
+        return 1
 
 
 #Essa função serve apenas para deixar os frames da câmera mais facilmente processados.
