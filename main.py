@@ -59,7 +59,7 @@ while True:
                 if controleData[primeiraCorrespondencia] == 0:
                     if verificaBanco == 0:
                         print('Registrando Aluno')
-                        funcoes.ConfirmaPresenca(primeiraCorrespondencia,nome, matricula)
+                        funcoes.ConfirmaPresenca(primeiraCorrespondencia,nome, matricula, controleData)
                         controleData[primeiraCorrespondencia] = 1
 
             # print(matricula)
