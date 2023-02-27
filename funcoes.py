@@ -167,8 +167,9 @@ def verificaPresenca(id):
     get = requisicao.json()[id]
     print('ID {}'.format(id))
     print(get)
+    
+    
     frequencia = get['frequencia']
-
     tamanhoFrequencia = len(frequencia)
     
     ultimaFrequenica  = frequencia[tamanhoFrequencia-1].split('T')[0]
@@ -220,7 +221,10 @@ def ConfirmaPresenca(id, nome, matricula,contoledata):
     get = requisicao.json()[id]
     dateDatabase = get['atualizedAt']
     frequencia = get['frequencia']
-    print(frequencia[0])
+    tamanhoFrequencia = len(frequencia)
+    
+    ultimaFrequenica  = frequencia[tamanhoFrequencia-1].split('T')[0]
+    print('ultimaFrequenica: {}'.format(ultimaFrequenica))
     
     # Seperar o date da requisição e recuperar apenas a data do usuario
     dateUser = dateDatabase.split('T')[0]
@@ -235,7 +239,7 @@ def ConfirmaPresenca(id, nome, matricula,contoledata):
 
 
     #se a data de hoje for diferente da data do usuário:
-    if (contoledata[id] == 0):
+    if (ultimaFrequenica == currentDate):
         if currentDate != dateUser:
             requests.patch("%s/registrarfrequencia/%s"%(api, matricula), {'atualizedAt' : currentDataBase, 'dateUser': currentDate})
             print("Aluno registrado com suscesso")

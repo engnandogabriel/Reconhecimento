@@ -50,19 +50,19 @@ while True:
 
 
                 if (controleBanco[primeiraCorrespondencia] == 0):
-                    controleBanco[primeiraCorrespondencia] = 1
-                    verificaBanco = funcoes.verificaPresenca(primeiraCorrespondencia)
-                    if verificaBanco == 1:
+                    controleBanco[primeiraCorrespondencia] = funcoes.verificaPresenca(primeiraCorrespondencia)
+                    if controleBanco[primeiraCorrespondencia] == 1:
                         print('Aluno ja registrado')
                     
 
                 if controleData[primeiraCorrespondencia] == 0:
-                    if verificaBanco == 0:
+                    if controleBanco[primeiraCorrespondencia] == 0:
                         print('Registrando Aluno')
                         funcoes.ConfirmaPresenca(primeiraCorrespondencia,nome, matricula, controleData)
                         controleData[primeiraCorrespondencia] = 1
-
-            # print(matricula)
+                        controleBanco[primeiraCorrespondencia] = 1
+                        
+            print("Controle banco {}".format(controleBanco[primeiraCorrespondencia]))
             nomesFaces.append(nome)
 
     continuarProcesso = not continuarProcesso #Dá um tempo para que o processamento possa ocorrer.
