@@ -62,7 +62,7 @@ while True:
                         controleData[primeiraCorrespondencia] = 1
                         controleBanco[primeiraCorrespondencia] = 1
                         
-            print("Controle banco {}".format(controleBanco[primeiraCorrespondencia]))
+            # print("Controle banco {}".format(controleBanco[primeiraCorrespondencia]))
             nomesFaces.append(nome)
 
     continuarProcesso = not continuarProcesso #Dá um tempo para que o processamento possa ocorrer.

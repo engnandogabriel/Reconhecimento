@@ -172,8 +172,14 @@ def verificaPresenca(id):
     frequencia = get['frequencia']
     tamanhoFrequencia = len(frequencia)
     
-    ultimaFrequenica  = frequencia[tamanhoFrequencia-1].split('T')[0]
-    print('ultimaFrequenica: {}'.format(ultimaFrequenica))
+    print('Tamanho Ultima frequencia: {}'.format(len(frequencia)))
+
+    if(len(frequencia) != 0):
+        ultimaFrequenica = frequencia[tamanhoFrequencia-1]
+        ultimaFrequenica = ultimaFrequenica.split('T')[0]
+    else:
+        ultimaFrequenica = '0000-00-00'
+    # print('ultimaFrequenica: {}'.format(ultimaFrequenica))
     
     dateDatabase = get['atualizedAt']
 
@@ -210,8 +216,6 @@ def verificaPresenca(id):
 
 #Esse é um método que ainda deve ser implementado. Deve ser acionado quando o aluno for reconhecido. Depende do funcionamento interno de registro de presença do Campus
 def ConfirmaPresenca(id, nome, matricula,contoledata):
-    
-    print(nome)
 
     print("Registrando o usuário %s com matricula %s no bando de dados"%(nome,matricula))
 
@@ -223,8 +227,13 @@ def ConfirmaPresenca(id, nome, matricula,contoledata):
     frequencia = get['frequencia']
     tamanhoFrequencia = len(frequencia)
     
-    ultimaFrequenica  = frequencia[tamanhoFrequencia-1].split('T')[0]
-    print('ultimaFrequenica: {}'.format(ultimaFrequenica))
+    print('Tamanho Ultima frequencia: {}'.format(len(frequencia)))
+
+    if(len(frequencia) != 0):
+        ultimaFrequenica = frequencia[tamanhoFrequencia-1]
+        ultimaFrequenica = ultimaFrequenica.split('T')[0]
+    else:
+        ultimaFrequenica = '0000-00-00'
     
     # Seperar o date da requisição e recuperar apenas a data do usuario
     dateUser = dateDatabase.split('T')[0]
@@ -238,12 +247,12 @@ def ConfirmaPresenca(id, nome, matricula,contoledata):
     currentDataBase = datetime.datetime.now()
 
 
-    #se a data de hoje for diferente da data do usuário:
-    if (ultimaFrequenica == currentDate):
-        if currentDate != dateUser:
-            requests.patch("%s/registrarfrequencia/%s"%(api, matricula), {'atualizedAt' : currentDataBase, 'dateUser': currentDate})
-            print("Aluno registrado com suscesso")
-            return 1
+    # se a data de hoje for diferente da data do usuário:
+    # if (ultimaFrequenica == currentDate):
+    if currentDate != dateUser:
+        requests.patch("%s/registrarfrequencia/%s"%(api, matricula), {'atualizedAt' : currentDataBase, 'dateUser': currentDate})
+        print("Aluno registrado com suscesso")
+        return 1
 
 
 #Essa função serve apenas para deixar os frames da câmera mais facilmente processados.
